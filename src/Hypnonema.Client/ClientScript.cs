@@ -163,7 +163,10 @@
 
             if (!double.TryParse(
                     API.GetResourceMetadata(API.GetCurrentResourceName(), "hypnonema_sync_interval", 0),
-                    out var syncInterval)) this.syncInterval = 10000;
+                    out var syncInterval))
+            {
+                this.syncInterval = 10000;
+            }
 
             this.playerPool = new VideoPlayerPool(url);
             this.Tick += this.OnFirstTick;
@@ -221,7 +224,7 @@
                                              SoundMaxDistance = soundMaxDistance,
                                              SoundMinDistance = soundMinDistance,
                                              SoundAttenuation = soundAttenuation,
-                                             Is3DAudioEnabled = is3DAudioEnabled
+                                             Is3DAudioEnabled = is3DAudioEnabled,
                                          },
                                  PositionalSettings = is3DRendered
                                                           ? new PositionalSettings
@@ -270,27 +273,125 @@
 
         private CallbackDelegate OnEditScreen(IDictionary<string, object> args, CallbackDelegate callback)
         {
-            var screenName = ArgsReader.GetArgKeyValue<string>(args, "screenName");
-            var id = ArgsReader.GetArgKeyValue<int>(args, "id");
-            var is3DRendered = ArgsReader.GetArgKeyValue<bool>(args, "is3DRendered");
-            var alwaysOn = ArgsReader.GetArgKeyValue<bool>(args, "alwaysOn");
-            var modelName = ArgsReader.GetArgKeyValue<string>(args, "modelName");
-            var renderTargetName = ArgsReader.GetArgKeyValue<string>(args, "renderTargetName");
-            var globalVolume = ArgsReader.GetArgKeyValue<float>(args, "globalVolume", 100f);
-            var soundAttenuation = ArgsReader.GetArgKeyValue<float>(args, "soundAttenuation", 5f);
-            var soundMinDistance = ArgsReader.GetArgKeyValue<float>(args, "soundMinDistance", 15f);
-            var soundMaxDistance = ArgsReader.GetArgKeyValue<float>(args, "soundMaxDistance", 100f);
-            var positionX = ArgsReader.GetArgKeyValue<float>(args, "positionX");
-            var positionY = ArgsReader.GetArgKeyValue<float>(args, "positionY");
-            var positionZ = ArgsReader.GetArgKeyValue<float>(args, "positionZ");
-            var rotationX = ArgsReader.GetArgKeyValue<float>(args, "rotationX");
-            var rotationY = ArgsReader.GetArgKeyValue<float>(args, "rotationY");
-            var rotationZ = ArgsReader.GetArgKeyValue<float>(args, "rotationZ");
-            var scaleX = ArgsReader.GetArgKeyValue<float>(args, "scaleX");
-            var scaleY = ArgsReader.GetArgKeyValue<float>(args, "scaleY");
-            var scaleZ = ArgsReader.GetArgKeyValue<float>(args, "scaleZ");
-            var is3DAudioEnabled = ArgsReader.GetArgKeyValue<bool>(args, "is3DAudioEnabled");
-           
+            var screenName = args.FirstOrDefault(arg => arg.Key == "screenName").Value?.ToString();
+            if (string.IsNullOrEmpty(screenName))
+            {
+                Debug.WriteLine("failed to edit screen. screenName is missing");
+                return callback;
+            }
+
+            if (!int.TryParse(args.FirstOrDefault(arg => arg.Key == "id").Value?.ToString(), out var id))
+            {
+                Debug.WriteLine("failed to edit screen. id is missing");
+                return callback;
+            }
+
+            if (!bool.TryParse(
+                    args.FirstOrDefault(arg => arg.Key == "is3DRendered").Value?.ToString(),
+                    out var is3DRendered)) is3DRendered = false;
+
+            if (!bool.TryParse(
+                    args.FirstOrDefault(arg => arg.Key == "alwaysOn").Value?.ToString(),
+                    out var alwaysOn)) alwaysOn = false;
+
+            var modelName = args.FirstOrDefault(arg => arg.Key == "modelName").Value?.ToString();
+            if (string.IsNullOrEmpty(modelName) && !is3DRendered)
+            {
+                Debug.WriteLine("failed to edit screen. modelName is missing");
+                return callback;
+            }
+
+            var renderTargetName = args.FirstOrDefault(arg => arg.Key == "renderTargetName").Value?.ToString();
+            if (string.IsNullOrEmpty(renderTargetName) && !is3DRendered)
+            {
+                Debug.WriteLine("failed to create screen. renderTargetName is missing");
+                return callback;
+            }
+
+            if (!float.TryParse(
+                    args.FirstOrDefault(arg => arg.Key == "globalVolume").Value?.ToString(),
+                    out var globalVolume)) globalVolume = 100.0f;
+
+            if (!float.TryParse(
+                    args.FirstOrDefault(arg => arg.Key == "soundAttenuation").Value?.ToString(),
+                    out var soundAttenuation)) soundAttenuation = 5.0f;
+
+            if (!float.TryParse(
+                    args.FirstOrDefault(arg => arg.Key == "soundMinDistance").Value?.ToString(),
+                    out var soundMinDistance)) soundMinDistance = 15.0f;
+
+            if (!float.TryParse(
+                    args.FirstOrDefault(arg => arg.Key == "soundMaxDistance").Value?.ToString(),
+                    out var soundMaxDistance)) soundMaxDistance = 100.0f;
+
+            if (!float.TryParse(args.FirstOrDefault(arg => arg.Key == "positionX").Value?.ToString(), out var positionX)
+                && is3DRendered)
+            {
+                Debug.WriteLine("failed to create screen. positionX is missing");
+                return callback;
+            }
+
+            if (!float.TryParse(args.FirstOrDefault(arg => arg.Key == "positionY").Value?.ToString(), out var positionY)
+                && is3DRendered)
+            {
+                Debug.WriteLine("failed to create screen. positionY is missing");
+                return callback;
+            }
+
+            if (!float.TryParse(args.FirstOrDefault(arg => arg.Key == "positionZ").Value?.ToString(), out var positionZ)
+                && is3DRendered)
+            {
+                Debug.WriteLine("failed to create screen. positionZ is missing");
+                return callback;
+            }
+
+            if (!float.TryParse(args.FirstOrDefault(arg => arg.Key == "rotationX").Value?.ToString(), out var rotationX)
+                && is3DRendered)
+            {
+                Debug.WriteLine("failed to create screen. rotationX is missing");
+                return callback;
+            }
+
+            if (!float.TryParse(args.FirstOrDefault(arg => arg.Key == "rotationY").Value?.ToString(), out var rotationY)
+                && is3DRendered)
+            {
+                Debug.WriteLine("failed to create screen. rotationY is missing");
+                return callback;
+            }
+
+            if (!float.TryParse(args.FirstOrDefault(arg => arg.Key == "rotationZ").Value?.ToString(), out var rotationZ)
+                && is3DRendered)
+            {
+                Debug.WriteLine("failed to create screen. rotationZ is missing");
+                return callback;
+            }
+
+            if (!float.TryParse(args.FirstOrDefault(arg => arg.Key == "scaleX").Value?.ToString(), out var scaleX)
+                && is3DRendered)
+            {
+                Debug.WriteLine("failed to create screen. scaleX is missing");
+                return callback;
+            }
+
+            if (!float.TryParse(args.FirstOrDefault(arg => arg.Key == "scaleY").Value?.ToString(), out var scaleY)
+                && is3DRendered)
+            {
+                Debug.WriteLine("failed to create screen. scaleY is missing");
+                return callback;
+            }
+
+            if (!float.TryParse(args.FirstOrDefault(arg => arg.Key == "scaleZ").Value?.ToString(), out var scaleZ)
+                && is3DRendered)
+            {
+                Debug.WriteLine("failed to create screen. scaleZ is missing");
+                return callback;
+            }
+
+            if (!bool.TryParse(args.FirstOrDefault(arg => arg.Key == "is3DAudioEnabled").Value?.ToString(), out var is3DAudioEnabled))
+            {
+                is3DAudioEnabled = false;
+            }
+
             var screen = new Screen
                              {
                                  Id = id,
@@ -304,7 +405,7 @@
                                              SoundMaxDistance = soundMaxDistance,
                                              SoundAttenuation = soundAttenuation,
                                              SoundMinDistance = soundMinDistance,
-                                             Is3DAudioEnabled = is3DAudioEnabled
+                                             Is3DAudioEnabled = is3DAudioEnabled,
                                          },
                                  TargetSettings =
                                      is3DRendered
@@ -363,14 +464,19 @@
                 this.playerPool.VideoPlayers?.Add(player);
             }
 
-            if (isAceAllowed) this.TriggerStateTick();
+            if (isAceAllowed)
+            {
+                this.TriggerStateTick();
+            }
 
             var state = JsonConvert.DeserializeObject<List<ScreenDuiState>>(lastKnownState);
             if (state != null)
             {
                 await Delay(5000);
                 foreach (var screenDuiState in state)
+                {
                     await this.playerPool.SynchronizeState(screenDuiState.State, screenDuiState.Screen);
+                }
             }
 
             // Debug.WriteLine("Initialized..");
@@ -495,7 +601,10 @@
 
         private async Task OnStateTick()
         {
-            if (!this.isInitialized || this.playerPool?.VideoPlayers?.Count == 0) return;
+            if (!this.isInitialized || this.playerPool?.VideoPlayers?.Count == 0)
+            {
+                return;
+            }
 
             var stateList = new List<DuiState>();
             var videoPlayers = this.playerPool?.VideoPlayers;
@@ -506,7 +615,10 @@
                 {
                     player.Browser.GetState();
                     var duiState = await BrowserStateHelperScript.GetLastState();
-                    if (duiState == null) continue;
+                    if (duiState == null)
+                    {
+                        continue;
+                    }
 
                     stateList.Add(duiState);
                 }

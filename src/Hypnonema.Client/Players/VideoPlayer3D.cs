@@ -65,6 +65,16 @@
             }
         }
 
+        public void Toggle3DAudio(bool value)
+        {
+            this.Browser.Toggle3DAudio(value);
+        }
+
+        private float GetSoundFactor(float distance)
+        {
+            return this.SoundMinDistance / (this.SoundMinDistance + this.SoundAttenuation
+                                            * (Math.Max(distance, this.SoundMinDistance) - this.SoundMinDistance));
+        }
         public void Dispose()
         {
             if (this.Browser.IsValid) this.Browser.Dispose();
@@ -117,20 +127,9 @@
             this.Browser.Update(paused, currentTime, currentSource, repeat);
         }
 
-        public void Toggle3DAudio(bool value)
-        {
-            this.Browser.Toggle3DAudio(value);
-        }
-
-        public void ToggleRepeat()
+        public void ToggleReplay(bool replay)
         {
             this.Browser.ToggleRepeat();
-        }
-
-        private float GetSoundFactor(float distance)
-        {
-            return this.SoundMinDistance / (this.SoundMinDistance + this.SoundAttenuation
-                                            * (Math.Max(distance, this.SoundMinDistance) - this.SoundMinDistance));
         }
     }
 }
