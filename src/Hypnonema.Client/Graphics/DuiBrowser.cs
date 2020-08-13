@@ -74,7 +74,7 @@
         {
             this.SendMessage(new { type = "init", screenName, posterUrl });
         }
-
+ 
         public void Pause()
         {
             this.SendMessage(new { type = "pause" });
@@ -103,11 +103,6 @@
         public void SetVolume(float volume)
         {
             this.SendMessage(new { type = "volume", volume = volume / 100 });
-        }
-
-        public void Mute(bool muted)
-        {
-            this.SendMessage(new { type = "mute", muted });
         }
 
         public void Stop()
@@ -151,14 +146,14 @@
             this.SendMessage(new { type = "toggle3DAudio", enabled = value });
         }
 
-        public void ToggleRepeat()
+        public void ToggleReplay(bool toggle)
         {
-            this.SendMessage(new { type = "toggleRepeat" });
+            this.SendMessage(new { type = "toggleReplay", value = toggle });
         }
 
-        public void Update(bool paused, float currentTime, string currentSource, bool repeat)
+        public void Update(bool paused, float currentTime, string currentSource)
         {
-            this.SendMessage(new { type = "update", paused, currentTime, src = currentSource, repeat });
+            this.SendMessage(new { type = "update", paused, currentTime, src = currentSource });
         }
     }
 }

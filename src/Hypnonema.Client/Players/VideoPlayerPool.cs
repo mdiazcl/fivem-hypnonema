@@ -63,7 +63,7 @@
             browser.CreateRuntimeTexture();
             await BaseScript.Delay(1000);
 
-            // Debug.WriteLine("sending init..");
+            Debug.WriteLine("sending init..");
             browser.Init(screen.Name, this.posterUrl);
 
             if (!screen.Is3DRendered)
@@ -155,17 +155,9 @@
                 return;
             }
 
-            Debug.WriteLine($"Synchronizing: {screen.Name}");
-            player.SynchronizeState(state.IsPaused, state.CurrentTime, state.CurrentSource, state.Repeat);
+            Debug.WriteLine("Synchronizing..");
+            player.SynchronizeState(state.IsPaused, state.CurrentTime, state.CurrentSource);
             this.VideoPlayers.Add(player);
-        }
-
-        public void ToggleRepeat(string screenName)
-        {
-            var player = this.VideoPlayers.FirstOrDefault(s => s.ScreenName == screenName);
-            if (player == null) return;
-
-            player.ToggleRepeat();
         }
 
         private static VideoPlayer2D CreateVideoPlayer2D(DuiBrowser browser, Shared.Models.Screen screen)

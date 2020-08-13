@@ -45,20 +45,18 @@
 
         private CallbackDelegate GetStateResponse(IDictionary<string, object> args, CallbackDelegate callback)
         {
-            var screenName = ArgsReader.GetArgKeyValue<string>(args, "screenName");
+            bool.TryParse(args.FirstOrDefault(arg => arg.Key == "paused").Value?.ToString(), out var paused);
+            float.TryParse(args.FirstOrDefault(arg => arg.Key == "currentTime").Value?.ToString(), out var currentTime);
+            float.TryParse(args.FirstOrDefault(arg => arg.Key == "duration").Value?.ToString(), out var duration);
+            bool.TryParse(args.FirstOrDefault(arg => arg.Key == "ended").Value?.ToString(), out var ended);
+            var currentSource = args.FirstOrDefault(arg => arg.Key == "currentSource").Value?.ToString();
+
+            var screenName = args.FirstOrDefault(arg => arg.Key == "screenName").Value?.ToString();
             if (string.IsNullOrEmpty(screenName))
             {
-                Debug.WriteLine("Warning: received state response without valid screenName.");
-                callback("");
+                Debug.WriteLine("error: received state response without valid screenName.");
                 return callback;
             }
-
-            var paused = ArgsReader.GetArgKeyValue<bool>(args, "paused");
-            var repeat = ArgsReader.GetArgKeyValue<bool>(args, "repeat");
-            var currentTime = ArgsReader.GetArgKeyValue<float>(args, "currentTime");
-            var duration = ArgsReader.GetArgKeyValue<float>(args, "duration");
-            var ended = ArgsReader.GetArgKeyValue<bool>(args, "ended");
-            var currentSource = ArgsReader.GetArgKeyValue<string>(args, "currentSource");
 
             var state = new DuiState
                             {
@@ -67,13 +65,10 @@
                                 Ended = ended,
                                 IsPaused = paused,
                                 Duration = duration,
-                                CurrentSource = currentSource,
-                                Repeat = repeat
+                                CurrentSource = currentSource
                             };
 
             StateQueue.Enqueue(state);
-
-            callback("OK");
             return callback;
         }
     }

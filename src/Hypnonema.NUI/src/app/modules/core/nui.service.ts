@@ -9,13 +9,6 @@ export class NuiService {
   constructor(private http: HttpClient) {
   }
 
-  public repeatVideo(screenName: string) {
-    this.http.post(`http://${environment.resourceName}/Hypnonema.OnToggleRepeat`, {
-      screenName
-    }).subscribe(() => {
-    }, error => console.log(error.toString()));
-  }
-
   public editScreen(screenName: string, screenId: number, is3DRendered: boolean, alwaysOn: boolean, modelName: string,
                     renderTargetName: string, globalVolume: number, soundAttenuation: number, soundMinDistance: number,
                     soundMaxDistance: number, positionX: number, positionY: number, positionZ: number, rotationX: number,
@@ -94,7 +87,7 @@ export class NuiService {
   }
 
   public createScreen(screenName: string, alwaysOn: boolean, globalVolume: number, soundAttenuation: number,
-                      soundMinDistance: number, soundMaxDistance: number, is3DRendered: boolean, is3DAudioEnabled: boolean, modelName?: string,
+                      soundMinDistance: number, soundMaxDistance: number, is3DRendered: boolean, use3DAudio: boolean, modelName?: string,
                       renderTargetName?: string, positionX?: number, positionY?: number, positionZ?: number,
                       rotationX?: number, rotationY?: number, rotationZ?: number, scaleX?: number, scaleY?: number, scaleZ?: number,
                      ) {
@@ -117,7 +110,7 @@ export class NuiService {
       scaleX,
       scaleY,
       scaleZ,
-      is3DAudioEnabled,
+      use3DAudio,
     })
       .subscribe(() => {
       }, error => {

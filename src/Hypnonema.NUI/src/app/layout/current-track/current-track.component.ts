@@ -74,15 +74,6 @@ export class CurrentTrackComponent implements OnInit {
     }, 500);
   }
 
-  repeat(screenName: string) {
-    this.nuiService.repeatVideo(screenName);
-
-    const refThis = this;
-    setTimeout(() => {
-      refThis.nuiService.requestDuiState(this.selectedScreenName);
-    }, 250);
-  }
-
   resumeOrPause(paused) {
     if (paused) {
       this.nuiService.resumeVideo(this.selectedScreenName);

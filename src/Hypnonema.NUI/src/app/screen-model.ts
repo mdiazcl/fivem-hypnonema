@@ -40,5 +40,4 @@ export interface ScreenStatus {
   duration: number;
   currentSource: string;
   ended: boolean;
-  repeat: boolean;
 }
